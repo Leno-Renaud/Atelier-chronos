@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  accent-color: #818CF8;
+  interpolate-size: allow-keywords;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  --scrollbar-thumb: #27272A;
+  --scrollbar-track: #09090B;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+}
+
+html,
+body {
+  background-color: #09090B;
+  color: #F4F4F5;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.015em;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Surface hierarchy: ultra-clean Linear/Raycast dark surfaces */
+.sleek-card {
+  background: linear-gradient(180deg, rgba(24, 24, 29, 0.85) 0%, rgba(17, 17, 21, 0.92) 100%);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.07),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 16px 36px -12px rgba(0, 0, 0, 0.6);
+}
+
+.sleek-task-row {
+  background-color: rgba(255, 255, 255, 0.025);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.sleek-task-row:hover {
+  background-color: rgba(255, 255, 255, 0.045);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.07),
+    0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+
+.sleek-popover {
+  background-color: rgba(20, 20, 25, 0.96);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.09),
+    0 24px 48px -8px rgba(0, 0, 0, 0.85);
+}
+
+/* Subtle nocturnal ambient glow without grid lines */
+.sleek-canvas {
+  background-color: #09090B;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -15%, rgba(129, 140, 248, 0.12), transparent),
+    radial-gradient(ellipse 50% 40% at 85% 10%, rgba(45, 212, 191, 0.06), transparent);
+}
+
+/* Popover animation (Emil: scale from 0.96 + blur) */
+@keyframes popoverEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translate3d(0, -4px, 0);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translate3d(0, 0, 0);
+    filter: blur(0px);
+  }
+}
+
+.animate-popover {
+  transform-origin: top center;
+  animation: popoverEnter 160ms var(--ease-out-expo) forwards;
+}
+
+input:not(input[type="range"]):user-invalid {
+  box-shadow: 0 0 0 1px rgba(244, 63, 94, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after,
+  .animate-popover {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
