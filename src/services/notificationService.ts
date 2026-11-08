@@ -185,7 +185,6 @@ export async function syncTaskNotifications(tasks: Task[]): Promise<number> {
           }
         }
       }
-      }
 
       if (notificationsToSchedule.length > 0) {
         await LocalNotifications.schedule({
