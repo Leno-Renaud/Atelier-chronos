@@ -129,6 +129,16 @@ export async function syncTaskNotifications(tasks: Task[]): Promise<number> {
 
   if (Capacitor.isNativePlatform()) {
     try {
+      // Création du canal Android haute priorité obligatoire
+      await LocalNotifications.createChannel({
+        id: 'chronos_reminders',
+        name: 'Rappels Atelier Chronos',
+        description: 'Notifications pour vos tâches et rappels',
+        importance: 5,
+        visibility: 1,
+        vibration: true,
+      });
+
       const pending = await LocalNotifications.getPending();
       if (pending.notifications.length > 0) {
         await LocalNotifications.cancel({ notifications: pending.notifications });
@@ -157,6 +167,7 @@ export async function syncTaskNotifications(tasks: Task[]): Promise<number> {
               id: notifIdCounter++,
               title: `Rappel · ${freqLabel}`,
               body: task.title,
+              channelId: 'chronos_reminders',
               schedule: {
                 at: candidate,
                 allowWhileIdle: true,
@@ -248,12 +259,22 @@ export async function triggerTestNotification(sampleText?: string): Promise<bool
 
   if (Capacitor.isNativePlatform()) {
     try {
+      await LocalNotifications.createChannel({
+        id: 'chronos_reminders',
+        name: 'Rappels Atelier Chronos',
+        description: 'Notifications pour vos tâches et rappels',
+        importance: 5,
+        visibility: 1,
+        vibration: true,
+      });
+
       await LocalNotifications.schedule({
         notifications: [
           {
             id: 999999,
-            title: 'Life Planner · Notification active',
+            title: 'Atelier Chronos · Test actif',
             body: bodyText,
+            channelId: 'chronos_reminders',
             schedule: { at: new Date(Date.now() + 1000), allowWhileIdle: true },
           },
         ],
