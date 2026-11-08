@@ -170,9 +170,6 @@ export function App() {
   const handleEnableNotifications = async () => {
     const status = await requestNotificationPermission();
     setNotifPerm(status);
-    if (status === 'granted') {
-      await triggerTestNotification('Notifications actives.');
-    }
   };
 
   const todayStats = useMemo(() => {

@@ -139,13 +139,13 @@ export async function syncTaskNotifications(tasks: Task[]): Promise<number> {
         vibration: true,
       });
 
+      // Annulation des anciennes notifications programmées
       const pending = await LocalNotifications.getPending();
       if (pending.notifications.length > 0) {
         await LocalNotifications.cancel({ notifications: pending.notifications });
       }
 
       const notificationsToSchedule: LocalNotificationSchema[] = [];
-      let notifIdCounter = 1000;
       const now = new Date();
 
       for (const task of activeTasks) {
@@ -154,8 +154,13 @@ export async function syncTaskNotifications(tasks: Task[]): Promise<number> {
         const minutes = Number.parseInt(minutesStr || '0', 10);
         const freqLabel = FREQUENCY_CONFIG[task.frequency].label;
 
-        // Programmation des prochaines occurrences sur 35 jours glissants pour fiabilité totale
-        for (let dayOffset = 0; dayOffset <= 35; dayOffset++) {
+        // Génère un ID numérique 32-bit stable dérivé de l'ID de la tâche
+        const baseId = Math.abs(
+          task.id.split('').reduce((acc, char) => (acc * 31 + char.charCodeAt(0)) | 0, 0) % 100000
+        );
+
+        // Programmation des prochaines occurrences sur 21 jours
+        for (let dayOffset = 0; dayOffset <= 21; dayOffset++) {
           const candidate = new Date(now);
           candidate.setDate(candidate.getDate() + dayOffset);
           candidate.setHours(hours, minutes, 0, 0);
@@ -164,10 +169,11 @@ export async function syncTaskNotifications(tasks: Task[]): Promise<number> {
 
           if (isTaskScheduledForDate(task, candidate)) {
             notificationsToSchedule.push({
-              id: notifIdCounter++,
+              id: baseId + dayOffset * 100000,
               title: `Rappel · ${freqLabel}`,
               body: task.title,
               channelId: 'chronos_reminders',
+              smallIcon: 'ic_launcher',
               schedule: {
                 at: candidate,
                 allowWhileIdle: true,
@@ -178,6 +184,7 @@ export async function syncTaskNotifications(tasks: Task[]): Promise<number> {
             });
           }
         }
+      }
       }
 
       if (notificationsToSchedule.length > 0) {
