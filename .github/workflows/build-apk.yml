@@ -44,7 +44,14 @@ jobs:
       - name: Build Android Debug APK
         run: |
           cd android
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          for attempt in 1 2 3; do
+            ./gradlew assembleDebug --no-daemon --stacktrace && exit 0
+            if [ "$attempt" -eq 3 ]; then
+              exit 1
+            fi
+            echo "Gradle build failed (attempt ${attempt}/3). Retrying in 15s..."
+            sleep 15
+          done
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
